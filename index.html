@@ -28,11 +28,36 @@
       <p class="lead">A simple calendar app for scheduling your work day</p>
       <p id="currentDay" class="lead"></p>
     </header>
+
     <div class="container">
+      <!-- day picker -->
+      <div style="border: 2px solid red;">
+        <p>EXTRA, CHANGE THE DATE</p>
+        <span><button type="button" id="dayEarlier">&lt;</button></span>
+        <span id='dayPicked'></span>
+        <span><button type="button" id="dayLater">&gt;</button></span>
+      </div>
+
       <!-- Timeblocks go here -->
+      <div id="timeBlocks" style="border: 2px solid blue;">
+<!-- 
+        <div class="row" style="border: 2px solid purple;">
+          <div class="col-md-10" style="border: 2px solid yellow;">
+            <input>Enter thing here</input>
+          </div>
+          <div class="col-md-1" style="border: 2px solid green;">
+            <button>Create</button>
+          </div>
+          <div class="col-md-1" style="border: 2px solid black;">
+            <button>Delete</button>
+          </div>
+        </div> -->
+
+      </div>
     </div>
 
     <script src="https://code.jquery.com/jquery-3.4.1.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/moment.js/2.24.0/moment.min.js"></script>
+    <script src="script.js"></script>
   </body>
 </html>
