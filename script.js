@@ -1,13 +1,3 @@
-// TODO AC
-    // X show current date in header
-    // X time blocks for standard workday
-    // X    time blocks are colore coded
-    //         past
-    //         present
-    //         future
-    // X    time block has an input field
-    //         save event to that time in local stoarge
-
 $(function(){
     // X show current date in header
     $("#currentDay").text(moment().format('LL'));
@@ -19,7 +9,7 @@ $(function(){
             colorCode = 'yellow';
         }
         if(i > currentHour){
-            colorCode = 'green'
+            colorCode = 'green';
         }
         $("#timeBlocks").append(
         `<form class='form-inline m-2 p-2' style='background-color:${colorCode};'>
@@ -27,44 +17,36 @@ $(function(){
             <input type='text' class='form-control mr-sm-2' data-hour='${i}' placeholder='Eat, sleep, code' minlength='2' maxlength='50'></input>
             <button type='button' class='btn btn-primary create mr-sm-2' data-hour='${i}'>Create</button>
             <button type='button' class='btn btn-success delete mr-sm-2' data-hour='${i}'>Delete</button>
-            <p class='m-sm-2' data-hour='${i}' style='background-color: white;'>NICE TO HAVE: LIST OF CURRENT HELD VALUE</p>
+            <p class='m-sm-2' data-hour='${i}' style='background-color: white; width: 50%;'>NICE TO HAVE: LIST OF CURRENT HELD VALUE</p>
         </form>`
         );
-
     }
 
     $(".create").on("click", function() {
         let saved = (localStorage.getItem("savedActivities")) ? JSON.parse(localStorage.getItem("savedActivities")) : [];
         let buttonVal = $(this).attr("data-hour");
-        // LOOP THROUGH THE INPUT FIELDS
-        $('input[data-hour]').each(function(){
-            if($(this).attr("data-hour") == buttonVal){
-                // IF THERE ISN'T A PREVIOUS LOCAL SAVE CREATE ONE WITH THE RIGHT DATA STRUCTURE
-                if(!saved.length){
-                    saved.push({"time": $(this).attr("data-hour"), "activity" : [$(this).val()]});
-                }else{
-                    saved.forEach(hour => {
-                        // IF THERE IS A PREVIOUS LOCAL SAVE AT THIS SPOT, ADD THE NEW STRING TO IT
-                        if(hour.time == buttonVal){
-                            hour.activity.push($(this).val());
-                        }else{
-                            // IF THERE ISN'T A PREVIOUS LOCAL SAVE AT THIS SPOT CREATE ONE WITH THE RIGHT DATA STRUCTURE
-                            saved.push({"time": $(this).attr("data-hour"), "activity" : [$(this).val()]});
-                        }                 
-                    })
+        let inputVal = $(`input[data-hour=${buttonVal}]`);
+        let savedElement = saved.filter(hour => {
+            if(hour.time == buttonVal){ 
+                return hour;
+            }});
+    
+        // FIRST SAVE GLOBAL || FIRST SAVE PER HOUR
+        if(!saved.length || !saved.includes(savedElement[0])){
+            saved.push({"time": inputVal.attr("data-hour"), "activity" : [inputVal.val()]});
+        }else{
+            // IF THERE IS A PREVIOUS LOCAL SAVE AT THIS SPOT, ADD THE NEW STRING TO IT
+            saved.forEach(hour => {
+                if(hour.time == buttonVal && hour.activity.length){
+                    hour.activity.push(inputVal.val());
                 }
-                localStorage.setItem("savedActivities", JSON.stringify(saved));
-                
-                // $("p[data-hour]").each(function(){
-                //     if($(this).attr("data-hour") == buttonVal){
-                //         $(this).text('').text(saved);
-
-                //     }
-                // })
-            }
-        console.log('end saved: ', saved);
+            })
+        }
+        // PUSH INPUT VALUE TO THE CURRENTLY SAVED VALUES BOX
+        // todo bug first pass on a new item shows previous items' values
+        // $(`p[data-hour=${buttonVal}]`).text('').text(saved[].activity);
+        localStorage.setItem("savedActivities", JSON.stringify(saved));
     })
-})
 
 // TODO Nice to have
     // select any day
