@@ -3,11 +3,6 @@
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <meta http-equiv="X-UA-Compatible" content="ie=edge" />
-    <link
-      rel="stylesheet"
-      href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css"
-    />
     <link
       rel="stylesheet"
       href="https://use.fontawesome.com/releases/v5.8.1/css/all.css"
@@ -18,7 +13,9 @@
       href="https://fonts.googleapis.com/css?family=Open+Sans&display=swap"
       rel="stylesheet"
     />
-    <link rel="stylesheet" href="style.css" />
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css" integrity="sha384-ggOyR0iXCbMQv3Xipma34MD+dH/1fQ784/j6cY/iJTQUOhcWr7x9JvoRxT2MZw1T" crossorigin="anonymous">
+
+    <!-- <link rel="stylesheet" href="style.css" /> -->
     <title>Work Day Scheduler</title>
   </head>
 
@@ -31,33 +28,25 @@
 
     <div class="container">
       <!-- day picker -->
-      <div style="border: 2px solid red;">
-        <p>EXTRA, CHANGE THE DATE</p>
-        <span><button type="button" id="dayEarlier">&lt;</button></span>
-        <span id='dayPicked'></span>
-        <span><button type="button" id="dayLater">&gt;</button></span>
+      <div class="row justify-content-md-center">
+        <div class="col-md-12" style="border: 2px red dotted;">
+          <p style="border: 2px red dotted;">EXTRA, CHANGE THE DATE</p>
+          <span><button type="button" class="btn btn-warning" id="dayEarlier">&lt;</button></span>
+          <span id='dayPicked'></span>
+          <span><button type="button"  class="btn btn-warning" id="dayLater">&gt;</button></span>
+        </div>
       </div>
+    </br>
 
       <!-- Timeblocks go here -->
-      <div id="timeBlocks" style="border: 2px solid blue;">
-<!-- 
-        <div class="row" style="border: 2px solid purple;">
-          <div class="col-md-10" style="border: 2px solid yellow;">
-            <input>Enter thing here</input>
-          </div>
-          <div class="col-md-1" style="border: 2px solid green;">
-            <button>Create</button>
-          </div>
-          <div class="col-md-1" style="border: 2px solid black;">
-            <button>Delete</button>
-          </div>
-        </div> -->
+      <div id="timeBlocks"></div>
 
-      </div>
     </div>
 
     <script src="https://code.jquery.com/jquery-3.4.1.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/moment.js/2.24.0/moment.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.14.7/umd/popper.min.js" integrity="sha384-UO2eT0CpHqdSJQ6hJty5KVphtPhzWj9WO1clHTMGa3JDZwrnQq4sF86dIHNDz0W1" crossorigin="anonymous"></script>
+    <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/js/bootstrap.min.js" integrity="sha384-JjSmVgyd0p3pXB1rRibZUAYoIIy6OrQ6VrjIEaFf/nJGzIxFDsf4x0xIM+B07jRM" crossorigin="anonymous"></script>
     <script src="script.js"></script>
   </body>
 </html>
