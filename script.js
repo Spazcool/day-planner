@@ -1,33 +1,35 @@
 $(function(){
-    // X show current date in header
-    $("#currentDay").text(moment().format('LL'));
-    let currentHour = moment().hour();
-    let colorCode = 'red';
-    // time blocks for standard workday
-    for(let i = 0; i < 24; i++){
-        if(i === currentHour){
-            colorCode = 'yellow';
+    function generateView(){
+        //show current date in header
+        $("#currentDay").text(moment().format('LL'));
+        let currentHour = moment().hour();
+        let colorCode = 'red';
+        // create time blocks
+        for(let i = 0; i < 24; i++){
+            if(i === currentHour){
+                colorCode = 'yellow';
+            }
+            if(i > currentHour){
+                colorCode = 'green';
+            }
+            $("#timeBlocks").append(
+            `<form class='form-inline m-2 p-2 col-md-12' style='background-color:${colorCode};'>
+                <label for='inlineFormInputName2' class='m-2 col-md-1'>Hour: ${i < 10 ? '0' + i : i}</label>
+                <input type='text' class='form-control mr-sm-2 col-md-6' data-hour='${i}' placeholder='Eat, sleep, code' minlength='2' maxlength='50'></input>
+                <button type='button' class='btn btn-primary create mr-sm-2 col-md-1' data-hour='${i}'>Create</button>
+                <button type='button' class='btn btn-success delete mr-sm-2 col-md-1' data-hour='${i}'>Delete</button>
+                <p class='m-sm-2 col-md-2' data-hour='${i}' style='background-color: white; overflow-wrap: break-word;'></p>
+            </form>`
+            );
         }
-        if(i > currentHour){
-            colorCode = 'green';
-        }
-        $("#timeBlocks").append(
-        `<form class='form-inline m-2 p-2 col-md-12' style='background-color:${colorCode};'>
-            <label for='inlineFormInputName2' class='m-2 col-md-1'>Hour: ${i < 10 ? '0' + i : i}</label>
-            <input type='text' class='form-control mr-sm-2 col-md-6' data-hour='${i}' placeholder='Eat, sleep, code' minlength='2' maxlength='50'></input>
-            <button type='button' class='btn btn-primary create mr-sm-2 col-md-1' data-hour='${i}'>Create</button>
-            <button type='button' class='btn btn-success delete mr-sm-2 col-md-1' data-hour='${i}'>Delete</button>
-            <p class='m-sm-2 col-md-2' data-hour='${i}' style='background-color: white; overflow-wrap: break-word;'></p>
-        </form>`
-        );
-    }
 
-    // IF PREVSIOUS SAVES SHOW EM ON PAGE LOAD
-    if(localStorage.getItem("savedActivities")){
-        let saved = JSON.parse(localStorage.getItem("savedActivities"));
-        saved.forEach(hour => {
-            $(`p[data-hour=${hour.time}]`).text('').text(hour.activity);
-        })
+        // IF PREVSIOUS SAVES SHOW EM ON PAGE LOAD
+        if(localStorage.getItem("savedActivities")){
+            let saved = JSON.parse(localStorage.getItem("savedActivities"));
+            saved.forEach(hour => {
+                $(`p[data-hour=${hour.time}]`).text('').text(hour.activity);
+            })
+        }
     }
 
     function addActivity() {
@@ -38,6 +40,7 @@ $(function(){
         // FIRST SAVE GLOBAL || FIRST SAVE PER HOUR
         if(!saved.length || !saved.includes(savedElement[0])){
             saved.push({"time": inputVal.attr("data-hour"), "activity" : [inputVal.val()]});
+            $(`p[data-hour=${buttonVal}]`).text('').text(inputVal.val());
         }else{
             // IF THERE IS A PREVIOUS LOCAL SAVE AT THIS SPOT, ADD THE NEW STRING TO IT
             saved.forEach(hour => {
@@ -45,15 +48,15 @@ $(function(){
                     hour.activity.push(inputVal.val());
                 }
             })
+            $(`p[data-hour=${buttonVal}]`).text('').text(savedElement[0].activity);
         }
-        // PUSH INPUT VALUE TO THE CURRENTLY SAVED VALUES BOX
-        localStorage.setItem("savedActivities", JSON.stringify(saved));
-         
-        $(`p[data-hour=${buttonVal}]`).text('').text(savedElement == undefined ? savedElement[0].activity : inputVal.val());
 
+        localStorage.setItem("savedActivities", JSON.stringify(saved));
+        // todo clear input field
     }
 
     function removeActivity(){
+
         // delete whole hour first
         // if possible delete last item
         // if possible delete specific item, passing it an individual delete button
@@ -72,7 +75,7 @@ $(function(){
         //     find p with matching data-hour
         
     }
-
+    generateView()
     $(".create").on("click", addActivity)
     $('.delete').on('click', removeActivity)
 
