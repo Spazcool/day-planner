@@ -12,25 +12,29 @@ $(function(){
             colorCode = 'green';
         }
         $("#timeBlocks").append(
-        `<form class='form-inline m-2 p-2' style='background-color:${colorCode};'>
-            <label for='inlineFormInputName2' class='m-2'>Hour: ${i < 10 ? '0' + i : i}</label>
-            <input type='text' class='form-control mr-sm-2' data-hour='${i}' placeholder='Eat, sleep, code' minlength='2' maxlength='50'></input>
-            <button type='button' class='btn btn-primary create mr-sm-2' data-hour='${i}'>Create</button>
-            <button type='button' class='btn btn-success delete mr-sm-2' data-hour='${i}'>Delete</button>
-            <p class='m-sm-2' data-hour='${i}' style='background-color: white; width: 50%;'>NICE TO HAVE: LIST OF CURRENT HELD VALUE</p>
+        `<form class='form-inline m-2 p-2 col-md-12' style='background-color:${colorCode};'>
+            <label for='inlineFormInputName2' class='m-2 col-md-1'>Hour: ${i < 10 ? '0' + i : i}</label>
+            <input type='text' class='form-control mr-sm-2 col-md-6' data-hour='${i}' placeholder='Eat, sleep, code' minlength='2' maxlength='50'></input>
+            <button type='button' class='btn btn-primary create mr-sm-2 col-md-1' data-hour='${i}'>Create</button>
+            <button type='button' class='btn btn-success delete mr-sm-2 col-md-1' data-hour='${i}'>Delete</button>
+            <p class='m-sm-2 col-md-2' data-hour='${i}' style='background-color: white; overflow-wrap: break-word;'></p>
         </form>`
         );
     }
 
-    $(".create").on("click", function() {
+    // IF PREVSIOUS SAVES SHOW EM ON PAGE LOAD
+    if(localStorage.getItem("savedActivities")){
+        let saved = JSON.parse(localStorage.getItem("savedActivities"));
+        saved.forEach(hour => {
+            $(`p[data-hour=${hour.time}]`).text('').text(hour.activity);
+        })
+    }
+
+    function addActivity() {
         let saved = (localStorage.getItem("savedActivities")) ? JSON.parse(localStorage.getItem("savedActivities")) : [];
         let buttonVal = $(this).attr("data-hour");
         let inputVal = $(`input[data-hour=${buttonVal}]`);
-        let savedElement = saved.filter(hour => {
-            if(hour.time == buttonVal){ 
-                return hour;
-            }});
-    
+        let savedElement = saved.filter(hour => hour.time == buttonVal);
         // FIRST SAVE GLOBAL || FIRST SAVE PER HOUR
         if(!saved.length || !saved.includes(savedElement[0])){
             saved.push({"time": inputVal.attr("data-hour"), "activity" : [inputVal.val()]});
@@ -43,14 +47,38 @@ $(function(){
             })
         }
         // PUSH INPUT VALUE TO THE CURRENTLY SAVED VALUES BOX
-        // todo bug first pass on a new item shows previous items' values
-        // $(`p[data-hour=${buttonVal}]`).text('').text(saved[].activity);
         localStorage.setItem("savedActivities", JSON.stringify(saved));
-    })
+         
+        $(`p[data-hour=${buttonVal}]`).text('').text(savedElement == undefined ? savedElement[0].activity : inputVal.val());
+
+    }
+
+    function removeActivity(){
+        // delete whole hour first
+        // if possible delete last item
+        // if possible delete specific item, passing it an individual delete button
+        let saved = (localStorage.getItem("savedActivities")) ? JSON.parse(localStorage.getItem("savedActivities")) : false;
+        let buttonVal = $(this).attr("data-hour");
+        let removedElement = saved.filter((hour) => hour.time !== buttonVal);
+        localStorage.setItem("savedActivities", JSON.stringify(removedElement));
+
+        // console.log(`saved: ${saved} || element: ${savedElement}`)
+        // console.log(savedElement)
+        // take data-hour from button
+        //     find hour in localStorage with matching time
+        //     splice it out of the Array
+        //     push back to localStorage
+        //     update view
+        //     find p with matching data-hour
+        
+    }
+
+    $(".create").on("click", addActivity)
+    $('.delete').on('click', removeActivity)
 
 // TODO Nice to have
     // select any day
-    // delete button on an timeblock
+    // delete button on an timeblock, on the indidual array items, need to pass them the button when created
     // PUSH CURRENT VALS TO A P
 
 $("#dayPicked").text(moment().day());
