@@ -45,6 +45,10 @@ $(function(){
         let saved = (localStorage.getItem("savedActivities")) ? JSON.parse(localStorage.getItem("savedActivities")) : [];
         let buttonVal = $(this).attr("data-hour");
         let inputVal = $(`input[data-hour=${buttonVal}]`);
+        // NO EMPTY INPUTS
+        if(inputVal.val() == ''){
+            return;
+        }
         let savedElement = saved.filter(hour => hour.time == buttonVal);
         // FIRST SAVE GLOBAL || FIRST SAVE PER HOUR
         if(!saved.length || !saved.includes(savedElement[0])){
@@ -80,7 +84,6 @@ $(function(){
         $(`button[data-value=${val}]`).on("click", removeActivity);
     }
 // todo bug when refreshing page if there's more than 3 items, the extras get chopped
-// todo bug, prohibit entering nothingin input field
     function refreshItems(){
         let saved = JSON.parse(localStorage.getItem("savedActivities"));
         $(".todos").html('')

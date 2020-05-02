@@ -28,12 +28,19 @@
     <div class="container">
       <!-- day picker -->
       <div class="row justify-content-md-center">
-        <div class="col-xs-12 col-md-12 p-2 datePicker" style="background-color: rgba(0,0,255, 0.8);">
-
-          <h3 style="border: 2px black dotted;">CHANGE THE DATE</h3>
-          <span><button type="button" class="btn btn-warning" id="dayEarlier">&lt;</button></span>
-          <span id='dayPicked'></span>
-          <span><button type="button"  class="btn btn-warning" id="dayLater">&gt;</button></span>
+        <div class="col-xs-12 col-md-12 pb-2 pt-3 datePicker" style="background-color: rgba(0,0,255, 0.8);">
+          <h3>CHANGE THE DATE</h3>
+          <div class="row">
+            <div class="col-md-4 mb-2">
+              <button type="button" class="btn btn-warning" style="width:100%;" id="dayEarlier">&lt;</button>
+            </div>
+            <div class="col-md-4 mb-2">
+              <div style="background-color: white; width:100%;" class="btn" id='dayPicked'></div>
+            </div>
+            <div class="col-md-4 mb-2">
+              <button type="button" class="btn btn-warning" style="width:100%;" id="dayLater">&gt;</button>
+            </div>
+          </div>
         </div>
       </div>
     </br>
