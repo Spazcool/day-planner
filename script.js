@@ -13,13 +13,25 @@ $(function(){
                 colorCode = 'green';
             }
             $("#timeBlocks").append(
-                `<div class='col-md-12' style='background-color:${colorCode};'>
+                `<div class='col-md-12 pb-2 timeBlock' style='background-color:${colorCode};'>
                     <form class='form-inline m-2 p-2'>
-                        <label for='inlineFormInputName2' class='m-2 col-md-1'>Hour: ${i < 10 ? '0' + i : i}</label>
-                        <input type='text' class='form-control mr-sm-2 col-md-6' data-hour='${i}' placeholder='Eat, sleep, code' minlength='2' maxlength='50'></input>
-                        <button type='button' class='btn btn-primary create mr-sm-2 col-md-1' data-hour='${i}'>Create</button>
+
+                        <div class='col-xs-12 col-md-2'>
+                            <label for='inlineFormInputName2'>
+                                <h3 class='mt-2 p-1'>Hour: ${i < 10 ? '0' + i : i}</h3>
+                            </label>
+                        </div>
+
+                        <div class='col-xs-12 col-md-8'>
+                            <input type='text' class='form-control' data-hour='${i}' style='width:100%;'placeholder='Eat, sleep, code' minlength='2' maxlength='50'></input>
+                        </div>
+
+                        <div class='col-xs-12 col-md-2 pt-1'>
+                            <button type='button' class='btn btn-primary create' data-hour='${i}'>Create</button>
+                        </div>
                     </form>
-                    <div class='row' data-hour='${i}'></div>
+
+                    <div class='row p-1' data-hour='${i}'></div>
                 </div>`
             );
         }
@@ -55,13 +67,19 @@ $(function(){
     // DYNAMICALLY CREATE TODO ITEMS & CORRESPONDING DELETE BUTTONS
     function displayItem(btn, val){
         $(`div[data-hour=${btn}]`).append(
-            `<div class='col-md-1' style='border: 2px dotted black;'>
-                <p>${val}</p>
-                <button type='button' class='btn btn-success delete' data-hour='${btn}' data-value='${val}'>Delete</button>
+
+            `<div class='col-xs-12 col-md-2 mt-2'>
+                <div class='card'> 
+                    <div class='card-body'>
+                        <p>${val}</p>
+                        <button type='button' class='btn btn-danger delete' data-hour='${btn}' data-value='${val}'>Delete</button>
+                    </div>
+                </div>
             </div>`
         );
         $(`button[data-value=${val}]`).on("click", removeActivity);
     }
+// todo bug when refreshing page if there's more than 3 items, the extras get chopped
 
     function refreshItems(){
         let saved = JSON.parse(localStorage.getItem("savedActivities"));
