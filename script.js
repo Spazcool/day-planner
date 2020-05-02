@@ -3,17 +3,17 @@ $(function(){
         //CURRENT DATE HEADER
         $("#currentDay").text(moment().format('LL'));
         let currentHour = moment().hour();
-        let colorCode = 'red';
+        let colorCode = 'rgba(255, 0, 0, 0.8);';
         // DYNAMICALLY CREATE TIMEBLOCKS
         for(let i = 0; i < 24; i++){
             if(i === currentHour){
-                colorCode = 'yellow';
+                colorCode = 'rgba(255,255,0, 0.8);';
             }
             if(i > currentHour){
-                colorCode = 'green';
+                colorCode = 'rgba(0,128,0, 0.8);';
             }
             $("#timeBlocks").append(
-                `<div class='col-md-12 pb-2 timeBlock' style='background-color:${colorCode};'>
+                `<div class='col-md-12 pb-2 mb-2 timeBlock' style='background-color:${colorCode};'>
                     <form class='form-inline m-2 p-2'>
 
                         <div class='col-xs-12 col-md-2'>
@@ -31,7 +31,7 @@ $(function(){
                         </div>
                     </form>
 
-                    <div class='row p-1' data-hour='${i}'></div>
+                    <div class='row p-1 todos' data-hour='${i}'></div>
                 </div>`
             );
         }
@@ -80,10 +80,10 @@ $(function(){
         $(`button[data-value=${val}]`).on("click", removeActivity);
     }
 // todo bug when refreshing page if there's more than 3 items, the extras get chopped
-
+// todo bug, prohibit entering nothingin input field
     function refreshItems(){
         let saved = JSON.parse(localStorage.getItem("savedActivities"));
-        $(".row").html('')
+        $(".todos").html('')
         saved.forEach(hour => {
             hour.activity.forEach(activity => {
                 displayItem(hour.time, activity)

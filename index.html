@@ -13,9 +13,8 @@
       href="https://fonts.googleapis.com/css?family=Open+Sans&display=swap"
       rel="stylesheet"
     />
-    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css" integrity="sha384-ggOyR0iXCbMQv3Xipma34MD+dH/1fQ784/j6cY/iJTQUOhcWr7x9JvoRxT2MZw1T" crossorigin="anonymous">
-    <link rel="stylesheet" href="mine.css" />
-    <!-- <link rel="stylesheet" href="style.css" /> -->
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css" integrity="sha384-ggOyR0iXCbMQv3Xipma34MD+dH/1fQ784/j6cY/iJTQUOhcWr7x9JvoRxT2MZw1T" crossorigin="anonymous" />
+    <link rel="stylesheet" href="style.css" />
     <title>Work Day Scheduler</title>
   </head>
 
@@ -29,8 +28,9 @@
     <div class="container">
       <!-- day picker -->
       <div class="row justify-content-md-center">
-        <div class="col-md-12" style="border: 2px red dotted;">
-          <p style="border: 2px red dotted;">EXTRA, CHANGE THE DATE</p>
+        <div class="col-xs-12 col-md-12 p-2 datePicker" style="background-color: rgba(0,0,255, 0.8);">
+
+          <h3 style="border: 2px black dotted;">CHANGE THE DATE</h3>
           <span><button type="button" class="btn btn-warning" id="dayEarlier">&lt;</button></span>
           <span id='dayPicked'></span>
           <span><button type="button"  class="btn btn-warning" id="dayLater">&gt;</button></span>
@@ -39,7 +39,7 @@
     </br>
 
       <!-- Timeblocks go here -->
-      <div id="timeBlocks"></div>
+      <div class="row mb-3" id="timeBlocks"></div>
 
     </div>
 
