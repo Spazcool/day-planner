@@ -1,10 +1,10 @@
 $(function(){
     function generateView(){
-        //show current date in header
+        //CURRENT DATE HEADER
         $("#currentDay").text(moment().format('LL'));
         let currentHour = moment().hour();
         let colorCode = 'red';
-        // create time blocks
+        // DYNAMICALLY CREATE TIMEBLOCKS
         for(let i = 0; i < 24; i++){
             if(i === currentHour){
                 colorCode = 'yellow';
@@ -13,13 +13,14 @@ $(function(){
                 colorCode = 'green';
             }
             $("#timeBlocks").append(
-            `<form class='form-inline m-2 p-2 col-md-12' style='background-color:${colorCode};'>
-                <label for='inlineFormInputName2' class='m-2 col-md-1'>Hour: ${i < 10 ? '0' + i : i}</label>
-                <input type='text' class='form-control mr-sm-2 col-md-6' data-hour='${i}' placeholder='Eat, sleep, code' minlength='2' maxlength='50'></input>
-                <button type='button' class='btn btn-primary create mr-sm-2 col-md-1' data-hour='${i}'>Create</button>
-                <button type='button' class='btn btn-success delete mr-sm-2 col-md-1' data-hour='${i}'>Delete</button>
-                <p class='m-sm-2 col-md-2' data-hour='${i}' style='background-color: white; overflow-wrap: break-word;'></p>
-            </form>`
+                `<div class='col-md-12' style='background-color:${colorCode};'>
+                    <form class='form-inline m-2 p-2'>
+                        <label for='inlineFormInputName2' class='m-2 col-md-1'>Hour: ${i < 10 ? '0' + i : i}</label>
+                        <input type='text' class='form-control mr-sm-2 col-md-6' data-hour='${i}' placeholder='Eat, sleep, code' minlength='2' maxlength='50'></input>
+                        <button type='button' class='btn btn-primary create mr-sm-2 col-md-1' data-hour='${i}'>Create</button>
+                    </form>
+                    <div class='row' data-hour='${i}'></div>
+                </div>`
             );
         }
 
@@ -27,7 +28,7 @@ $(function(){
         if(localStorage.getItem("savedActivities")){
             let saved = JSON.parse(localStorage.getItem("savedActivities"));
             saved.forEach(hour => {
-                $(`p[data-hour=${hour.time}]`).text('').text(hour.activity);
+                $(`div[data-hour=${hour.time}]`).text('').text(hour.activity);
             })
         }
     }
@@ -40,30 +41,42 @@ $(function(){
         // FIRST SAVE GLOBAL || FIRST SAVE PER HOUR
         if(!saved.length || !saved.includes(savedElement[0])){
             saved.push({"time": inputVal.attr("data-hour"), "activity" : [inputVal.val()]});
-            $(`p[data-hour=${buttonVal}]`).text('').text(inputVal.val());
+            displayItem(buttonVal, '0', inputVal.val())
         }else{
-            // IF THERE IS A PREVIOUS LOCAL SAVE AT THIS SPOT, ADD THE NEW STRING TO IT
+            // IF THERE IS A PREVIOUS LOCAL SAVE AT THIS SPOT, ADD THE NEW ITEM TO IT
             saved.forEach(hour => {
                 if(hour.time == buttonVal && hour.activity.length){
                     hour.activity.push(inputVal.val());
+                    displayItem(buttonVal, (hour.activity.length -1), inputVal.val())
                 }
-            })
-            $(`p[data-hour=${buttonVal}]`).text('').text(savedElement[0].activity);
+            })    
         }
 
         localStorage.setItem("savedActivities", JSON.stringify(saved));
-        // todo clear input field
+        inputVal.val('')
+    }
+
+    function displayItem(btn, index, val){
+        $(`div[data-hour=${btn}]`).append(
+            `<div class='col-md-1' style='border: 2px dotted black;'>
+                <p>${val}</p>
+                <button type='button' class='btn btn-success delete' data-hour='${btn}' data-index='${index}'>Delete</button>
+            </div>`
+        );
+        $(`button[data-index=${index}]`).on("click", removeActivity);
     }
 
     function removeActivity(){
-
         // delete whole hour first
         // if possible delete last item
         // if possible delete specific item, passing it an individual delete button
-        let saved = (localStorage.getItem("savedActivities")) ? JSON.parse(localStorage.getItem("savedActivities")) : false;
+        // let saved = (localStorage.getItem("savedActivities")) ? JSON.parse(localStorage.getItem("savedActivities")) : false;
         let buttonVal = $(this).attr("data-hour");
-        let removedElement = saved.filter((hour) => hour.time !== buttonVal);
-        localStorage.setItem("savedActivities", JSON.stringify(removedElement));
+        let buttonIndex = $(this).attr("data-index");
+        console.log($(this));
+        console.log(`val: ${buttonVal} || index: ${buttonIndex}`);
+        // let removedElement = saved.filter((hour) => hour.time !== buttonVal);
+        // localStorage.setItem("savedActivities", JSON.stringify(removedElement));
 
         // console.log(`saved: ${saved} || element: ${savedElement}`)
         // console.log(savedElement)
@@ -75,28 +88,30 @@ $(function(){
         //     find p with matching data-hour
         
     }
+
     generateView()
     $(".create").on("click", addActivity)
-    $('.delete').on('click', removeActivity)
 
 // TODO Nice to have
+    // this day in history background image? or link ( external api?)
     // select any day
+        // maria linked a calender
     // delete button on an timeblock, on the indidual array items, need to pass them the button when created
-    // PUSH CURRENT VALS TO A P
 
-$("#dayPicked").text(moment().day());
-$("#dayEarlier").on("click", () => {
-    let currentChosen = $("#dayPicked").text();
-    console.log('sub ', parseInt(currentChosen))
-    console.log('sub ', 6 - parseInt(currentChosen) + 1)
-    $("#dayPicked").text(moment().subtract(((6 - parseInt(currentChosen)) + 1), 'day').day())
-})
-$("#dayLater").on("click", () => {
-    let currentChosen = $("#dayPicked").text();
-    console.log('math ', 6 % (parseInt(currentChosen) + 1)), // 6%7
-    console.log('math ', 6% 1),
-    console.log('add ', parseInt(currentChosen))
-    console.log('add ', (parseInt(currentChosen) + 1) % 6)
-    $("#dayPicked").text(moment().add((parseInt(currentChosen) + 2), 'day').weekday())
-})
+    $("#dayPicked").text(moment().day());
+    $("#dayEarlier").on("click", () => {
+        let currentChosen = $("#dayPicked").text();
+        console.log('sub ', parseInt(currentChosen))
+        console.log('sub ', 6 - parseInt(currentChosen) + 1)
+        $("#dayPicked").text(moment().subtract(((6 - parseInt(currentChosen)) + 1), 'day').day())
+    })
+
+    $("#dayLater").on("click", () => {
+        let currentChosen = $("#dayPicked").text();
+        console.log('math ', 6 % (parseInt(currentChosen) + 1)), // 6%7
+        console.log('math ', 6% 1),
+        console.log('add ', parseInt(currentChosen))
+        console.log('add ', (parseInt(currentChosen) + 1) % 6)
+        $("#dayPicked").text(moment().add((parseInt(currentChosen) + 2), 'day').weekday())
+    })
 })
