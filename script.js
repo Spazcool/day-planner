@@ -23,13 +23,9 @@ $(function(){
                 </div>`
             );
         }
-
         // IF PREVSIOUS SAVES SHOW EM ON PAGE LOAD
         if(localStorage.getItem("savedActivities")){
-            let saved = JSON.parse(localStorage.getItem("savedActivities"));
-            saved.forEach(hour => {
-                $(`div[data-hour=${hour.time}]`).text('').text(hour.activity);
-            })
+            refreshItems()
         }
     }
 
@@ -41,13 +37,13 @@ $(function(){
         // FIRST SAVE GLOBAL || FIRST SAVE PER HOUR
         if(!saved.length || !saved.includes(savedElement[0])){
             saved.push({"time": inputVal.attr("data-hour"), "activity" : [inputVal.val()]});
-            displayItem(buttonVal, '0', inputVal.val())
+            displayItem(buttonVal, inputVal.val())
         }else{
             // IF THERE IS A PREVIOUS LOCAL SAVE AT THIS SPOT, ADD THE NEW ITEM TO IT
             saved.forEach(hour => {
                 if(hour.time == buttonVal && hour.activity.length){
                     hour.activity.push(inputVal.val());
-                    displayItem(buttonVal, (hour.activity.length -1), inputVal.val())
+                    displayItem(buttonVal, inputVal.val())
                 }
             })    
         }
@@ -56,37 +52,47 @@ $(function(){
         inputVal.val('')
     }
 
-    function displayItem(btn, index, val){
+    // DYNAMICALLY CREATE TODO ITEMS & CORRESPONDING DELETE BUTTONS
+    function displayItem(btn, val){
         $(`div[data-hour=${btn}]`).append(
             `<div class='col-md-1' style='border: 2px dotted black;'>
                 <p>${val}</p>
-                <button type='button' class='btn btn-success delete' data-hour='${btn}' data-index='${index}'>Delete</button>
+                <button type='button' class='btn btn-success delete' data-hour='${btn}' data-value='${val}'>Delete</button>
             </div>`
         );
-        $(`button[data-index=${index}]`).on("click", removeActivity);
+        $(`button[data-value=${val}]`).on("click", removeActivity);
+    }
+
+    function refreshItems(){
+        let saved = JSON.parse(localStorage.getItem("savedActivities"));
+        $(".row").html('')
+        saved.forEach(hour => {
+            hour.activity.forEach(activity => {
+                displayItem(hour.time, activity)
+            })  
+        })
     }
 
     function removeActivity(){
-        // delete whole hour first
-        // if possible delete last item
-        // if possible delete specific item, passing it an individual delete button
-        // let saved = (localStorage.getItem("savedActivities")) ? JSON.parse(localStorage.getItem("savedActivities")) : false;
-        let buttonVal = $(this).attr("data-hour");
-        let buttonIndex = $(this).attr("data-index");
-        console.log($(this));
-        console.log(`val: ${buttonVal} || index: ${buttonIndex}`);
-        // let removedElement = saved.filter((hour) => hour.time !== buttonVal);
-        // localStorage.setItem("savedActivities", JSON.stringify(removedElement));
+        let saved = JSON.parse(localStorage.getItem("savedActivities"));
+        let buttonHour = $(this).attr("data-hour");
+        let buttonValue = $(this).attr("data-value");
 
-        // console.log(`saved: ${saved} || element: ${savedElement}`)
-        // console.log(savedElement)
-        // take data-hour from button
-        //     find hour in localStorage with matching time
-        //     splice it out of the Array
-        //     push back to localStorage
-        //     update view
-        //     find p with matching data-hour
-        
+        saved.forEach((hour, i) => {
+            if(hour.time == buttonHour){ 
+                // todo might be a bug if elements share a name
+                let index = hour.activity.findIndex(el => el === buttonValue);
+                console.log(index)
+                hour.activity.splice(index, 1);
+                // IF LAST ACTIVITY IN ARR, REMOVE ARR SO IT PLAYS NICE IN addActivity FUNC
+                if(hour.activity.length === 0){
+                    saved.splice(i, 1)
+                }
+            }
+        });
+       
+        localStorage.setItem("savedActivities", JSON.stringify(saved));
+        refreshItems()
     }
 
     generateView()
@@ -96,7 +102,6 @@ $(function(){
     // this day in history background image? or link ( external api?)
     // select any day
         // maria linked a calender
-    // delete button on an timeblock, on the indidual array items, need to pass them the button when created
 
     $("#dayPicked").text(moment().day());
     $("#dayEarlier").on("click", () => {
