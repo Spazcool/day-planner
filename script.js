@@ -1,61 +1,48 @@
 $(function(){
+    const immutableToday = moment();
     let today = moment();
 
     function generateView(){
         $("#dayPicked").text(today.format('LL'));
         //CURRENT DATE HEADER
-        $("#currentDay").text(moment().format('LL'));
+        $("#currentDay").text(immutableToday.format('LL'));
         let date = moment($('#dayPicked').text()).locale('fr').format('L');
-        let currentHour = moment().hour();
-        let colorCode = 'rgba(255, 0, 0, 0.8);';
         // DYNAMICALLY CREATE TIMEBLOCKS
         for(let i = 0; i < 24; i++){
-            if(date < today){
-            }else if(date > today){
-                colorCode = 'rgba(0,128,0, 0.8);';
-            }else{
-                if(i === currentHour){
-                    colorCode = 'rgba(255,255,0, 0.8);';
-                }
-                if(i > currentHour){
-                    colorCode = 'rgba(0,128,0, 0.8);';
-                }
-            }
-                $("#timeBlocks").append(
-                    `<div class='col-md-12 pb-2 mb-2 timeBlock' style='background-color:${colorCode};'>
-                        <form class='form-inline m-2 p-2'>
+            $("#timeBlocks").append(
+                `<div class='col-md-12 pb-2 mb-2 timeBlock' data-block='${i}'>
+                    <form class='form-inline m-2 p-2'>
 
-                            <div class='col-xs-12 col-md-2'>
-                                <label for='inlineFormInputName2'>
-                                    <h3 class='mt-2 p-1'>Hour: ${i < 10 ? '0' + i : i}</h3>
-                                </label>
-                            </div>
+                        <div class='col-xs-12 col-md-2'>
+                            <label for='inlineFormInputName2'>
+                                <h3 class='mt-2 p-1'>Hour: ${i < 10 ? '0' + i : i}</h3>
+                            </label>
+                        </div>
 
-                            <div class='col-xs-12 col-md-8'>
-                                <input type='text' class='form-control' data-hour='${i}' style='width:100%;'placeholder='Eat, sleep, code' minlength='2' maxlength='50'></input>
-                            </div>
+                        <div class='col-xs-12 col-md-8'>
+                            <input type='text' class='form-control' data-hour='${i}' style='width:100%;'placeholder='Eat, sleep, code' minlength='2' maxlength='50'></input>
+                        </div>
 
-                            <div class='col-xs-12 col-md-2 pt-1'>
-                                <button type='button' class='btn btn-primary create' data-hour='${i}'>Create</button>
-                            </div>
-                        </form>
+                        <div class='col-xs-12 col-md-2 pt-1'>
+                            <button type='button' class='btn btn-primary create' data-hour='${i}'>Create</button>
+                        </div>
+                    </form>
 
-                        <div class='row p-1 todos' data-hour='${i}'></div>
-                    </div>`
-                );
-            
+                    <div class='row p-1 todos' data-hour='${i}'></div>
+                </div>`
+            );   
         }
         // IF PREVSIOUS SAVES SHOW EM ON PAGE LOAD
         if(localStorage.getItem(date)){
             refreshItems()
+        }else{
+            colorBlocks()
         }
     }
 
     function addActivity() {
         // CREATE DATE STRING DD/MM/YYYY
         let date = moment($('#dayPicked').text()).locale('fr').format('L');
-
-        console.log(typeof date)
         let saved = localStorage.getItem(date) ? JSON.parse(localStorage.getItem(date)) : [];
         let buttonVal = $(this).attr("data-hour");
         let inputVal = $(`input[data-hour=${buttonVal}]`);
@@ -82,6 +69,27 @@ $(function(){
         inputVal.val('')
     }
 
+    function colorBlocks(){
+        let date = moment($('#dayPicked').text()).locale('fr').format('L');
+        let currentHour = moment().hour();
+        let colorCode = 'rgba(255, 0, 0, 0.8);';
+        
+        $('.timeBlock').each(function(){
+            if(moment(date).isBefore(moment(immutableToday).locale('fr').format('L'))){
+            }else if(moment(date).isAfter(moment(immutableToday).locale('fr').format('L'))){
+                colorCode = 'rgba(0,128,0, 0.8);';
+            }else{
+                if($(this).attr('data-block') == currentHour){
+                    colorCode = 'rgba(255,255,0, 0.8);';
+                }
+                if($(this).attr('data-block') > currentHour){
+                    colorCode = 'rgba(0,128,0, 0.8);';
+                }
+            }
+            $(this).attr('style', `background-color:${colorCode};`)
+        })
+    }
+    
     // DYNAMICALLY CREATE TODO ITEMS & CORRESPONDING DELETE BUTTONS
     function displayItem(btn, val){
         $(`div[data-hour=${btn}]`).append(
@@ -98,6 +106,7 @@ $(function(){
         $(`button[data-value=${val}]`).on("click", removeActivity);
     }
 
+    // 
     function refreshItems(){
         let date = moment($('#dayPicked').text()).locale('fr').format('L');
         let saved = JSON.parse(localStorage.getItem(date));
@@ -109,7 +118,8 @@ $(function(){
                     displayItem(hour.time, activity)
                 })  
             })
-        }  
+        }
+        colorBlocks()  
     }
 
     function removeActivity(){
@@ -135,14 +145,16 @@ $(function(){
     }
 
     generateView()
+    
     $(".create").on("click", addActivity)
-
+    
+    // GO BACK A DAY 
     $("#dayEarlier").on("click", () => {
         today = today.subtract(1, 'day');
         $('#dayPicked').text(today.format('LL'));
         refreshItems()
     })
-
+    // GO FORWARD A DAY
     $("#dayLater").on("click", () => {
         today = today.add(1, 'day');
         $('#dayPicked').text(today.format('LL'));
