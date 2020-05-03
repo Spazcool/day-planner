@@ -1,48 +1,62 @@
 $(function(){
+    let today = moment();
+
     function generateView(){
+        $("#dayPicked").text(today.format('LL'));
         //CURRENT DATE HEADER
         $("#currentDay").text(moment().format('LL'));
+        let date = moment($('#dayPicked').text()).locale('fr').format('L');
         let currentHour = moment().hour();
         let colorCode = 'rgba(255, 0, 0, 0.8);';
         // DYNAMICALLY CREATE TIMEBLOCKS
         for(let i = 0; i < 24; i++){
-            if(i === currentHour){
-                colorCode = 'rgba(255,255,0, 0.8);';
-            }
-            if(i > currentHour){
+            if(date < today){
+            }else if(date > today){
                 colorCode = 'rgba(0,128,0, 0.8);';
+            }else{
+                if(i === currentHour){
+                    colorCode = 'rgba(255,255,0, 0.8);';
+                }
+                if(i > currentHour){
+                    colorCode = 'rgba(0,128,0, 0.8);';
+                }
             }
-            $("#timeBlocks").append(
-                `<div class='col-md-12 pb-2 mb-2 timeBlock' style='background-color:${colorCode};'>
-                    <form class='form-inline m-2 p-2'>
+                $("#timeBlocks").append(
+                    `<div class='col-md-12 pb-2 mb-2 timeBlock' style='background-color:${colorCode};'>
+                        <form class='form-inline m-2 p-2'>
 
-                        <div class='col-xs-12 col-md-2'>
-                            <label for='inlineFormInputName2'>
-                                <h3 class='mt-2 p-1'>Hour: ${i < 10 ? '0' + i : i}</h3>
-                            </label>
-                        </div>
+                            <div class='col-xs-12 col-md-2'>
+                                <label for='inlineFormInputName2'>
+                                    <h3 class='mt-2 p-1'>Hour: ${i < 10 ? '0' + i : i}</h3>
+                                </label>
+                            </div>
 
-                        <div class='col-xs-12 col-md-8'>
-                            <input type='text' class='form-control' data-hour='${i}' style='width:100%;'placeholder='Eat, sleep, code' minlength='2' maxlength='50'></input>
-                        </div>
+                            <div class='col-xs-12 col-md-8'>
+                                <input type='text' class='form-control' data-hour='${i}' style='width:100%;'placeholder='Eat, sleep, code' minlength='2' maxlength='50'></input>
+                            </div>
 
-                        <div class='col-xs-12 col-md-2 pt-1'>
-                            <button type='button' class='btn btn-primary create' data-hour='${i}'>Create</button>
-                        </div>
-                    </form>
+                            <div class='col-xs-12 col-md-2 pt-1'>
+                                <button type='button' class='btn btn-primary create' data-hour='${i}'>Create</button>
+                            </div>
+                        </form>
 
-                    <div class='row p-1 todos' data-hour='${i}'></div>
-                </div>`
-            );
+                        <div class='row p-1 todos' data-hour='${i}'></div>
+                    </div>`
+                );
+            
         }
         // IF PREVSIOUS SAVES SHOW EM ON PAGE LOAD
-        if(localStorage.getItem("savedActivities")){
+        if(localStorage.getItem(date)){
             refreshItems()
         }
     }
 
     function addActivity() {
-        let saved = (localStorage.getItem("savedActivities")) ? JSON.parse(localStorage.getItem("savedActivities")) : [];
+        // CREATE DATE STRING DD/MM/YYYY
+        let date = moment($('#dayPicked').text()).locale('fr').format('L');
+
+        console.log(typeof date)
+        let saved = localStorage.getItem(date) ? JSON.parse(localStorage.getItem(date)) : [];
         let buttonVal = $(this).attr("data-hour");
         let inputVal = $(`input[data-hour=${buttonVal}]`);
         // NO EMPTY INPUTS
@@ -64,7 +78,7 @@ $(function(){
             })    
         }
 
-        localStorage.setItem("savedActivities", JSON.stringify(saved));
+        localStorage.setItem(date, JSON.stringify(saved));
         inputVal.val('')
     }
 
@@ -83,27 +97,31 @@ $(function(){
         );
         $(`button[data-value=${val}]`).on("click", removeActivity);
     }
-// todo bug when refreshing page if there's more than 3 items, the extras get chopped
+
     function refreshItems(){
-        let saved = JSON.parse(localStorage.getItem("savedActivities"));
+        let date = moment($('#dayPicked').text()).locale('fr').format('L');
+        let saved = JSON.parse(localStorage.getItem(date));
         $(".todos").html('')
-        saved.forEach(hour => {
-            hour.activity.forEach(activity => {
-                displayItem(hour.time, activity)
-            })  
-        })
+        // NO TYPEERRORS PLEASE AND THANK YOU
+        if(saved){
+            saved.forEach(hour => {
+                hour.activity.forEach(activity => {
+                    displayItem(hour.time, activity)
+                })  
+            })
+        }  
     }
 
     function removeActivity(){
-        let saved = JSON.parse(localStorage.getItem("savedActivities"));
+        let date = moment($('#dayPicked').text()).locale('fr').format('L');
+        let saved = JSON.parse(localStorage.getItem(date));
         let buttonHour = $(this).attr("data-hour");
         let buttonValue = $(this).attr("data-value");
 
         saved.forEach((hour, i) => {
             if(hour.time == buttonHour){ 
-                // todo might be a bug if elements share a name
+                // TODO BUG: IF ELEMENTS THAT SHARE AN ARRAY HAVE THE SAME NAME, THEY BOTH GET GANKED
                 let index = hour.activity.findIndex(el => el === buttonValue);
-                console.log(index)
                 hour.activity.splice(index, 1);
                 // IF LAST ACTIVITY IN ARR, REMOVE ARR SO IT PLAYS NICE IN addActivity FUNC
                 if(hour.activity.length === 0){
@@ -112,32 +130,22 @@ $(function(){
             }
         });
        
-        localStorage.setItem("savedActivities", JSON.stringify(saved));
+        localStorage.setItem(date, JSON.stringify(saved));
         refreshItems()
     }
 
     generateView()
     $(".create").on("click", addActivity)
 
-// TODO Nice to have
-    // this day in history background image? or link ( external api?)
-    // select any day
-        // maria linked a calender
-
-    $("#dayPicked").text(moment().day());
     $("#dayEarlier").on("click", () => {
-        let currentChosen = $("#dayPicked").text();
-        console.log('sub ', parseInt(currentChosen))
-        console.log('sub ', 6 - parseInt(currentChosen) + 1)
-        $("#dayPicked").text(moment().subtract(((6 - parseInt(currentChosen)) + 1), 'day').day())
+        today = today.subtract(1, 'day');
+        $('#dayPicked').text(today.format('LL'));
+        refreshItems()
     })
 
     $("#dayLater").on("click", () => {
-        let currentChosen = $("#dayPicked").text();
-        console.log('math ', 6 % (parseInt(currentChosen) + 1)), // 6%7
-        console.log('math ', 6% 1),
-        console.log('add ', parseInt(currentChosen))
-        console.log('add ', (parseInt(currentChosen) + 1) % 6)
-        $("#dayPicked").text(moment().add((parseInt(currentChosen) + 2), 'day').weekday())
+        today = today.add(1, 'day');
+        $('#dayPicked').text(today.format('LL'));
+        refreshItems()
     })
 })
