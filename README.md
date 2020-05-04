@@ -1,51 +1,35 @@
 # 05 Third-Party APIs: Work Day Scheduler
 
-Create a simple calendar application that allows the user to save events for each hour of the day. This app will run in the browser and feature dynamically updated HTML and CSS powered by jQuery.
+A simple calendar application that allows the user to save multiple events for each hour of the day, for any number of days. This app runs in the browser and features dynamically updated HTML and CSS powered by jQuery and utilizes the Moment.JS library.
 
-You'll need to use the [Moment.js](https://momentjs.com/) library to work with date and time. Be sure to read the documentation carefully and concentrate on using Moment.js in the browser.
+<p align="center">
+   <img width="70%" height="300vh" src="./images/desktop.gif">
+   <img width="20%" height="300vh" src="./images/mobile.gif">
+</p>
 
-## User Story
+## Getting Started
 
-```
-AS AN employee with a busy schedule
-I WANT to add important events to a daily planner
-SO THAT I can manage my time effectively
-```
+Play on my [site](http://www.spazcool.com/day-planner) or host locally after cloning from the [repo](https://github.com/Spazcool/day-planner).
 
-## Acceptance Criteria
+### Prerequisites
 
-```
-GIVEN I am using a daily planner to create a schedule
-WHEN I open the planner
-THEN the current day is displayed at the top of the calendar
+A browser and an internet connection is all you'll need.
 
-WHEN I scroll down
-THEN I am presented with timeblocks for standard business hours
+### Installing
 
-WHEN I view the timeblocks for that day
-THEN each timeblock is color coded to indicate whether it is in the past, present, or future
+No installation required.
 
-WHEN I click into a timeblock
-THEN I can enter an event
+## Built With
 
-WHEN I click the save button for that timeblock
-THEN the text for that event is saved in local storage
+* JS & jQuery
+* HTML
+* CSS & Bootstrap
+* Moment.JS
 
-WHEN I refresh the page
-THEN the saved events persist
-```
+## Authors
 
-The following animation demonstrates the application functionality:
+* **Douglas Wright** - [Spazcool](https://github.com/Spazcool)
 
-![day planner demo](./Assets/05-third-party-apis-homework-demo.gif)
+## License
 
-## Review
-
-You are required to submit the following for review:
-
-* The URL of the deployed application.
-
-* The URL of the GitHub repository. Give the repository a unique name and include a README describing the project.
-
-- - -
-© 2019 Trilogy Education Services, a 2U, Inc. brand. All Rights Reserved.
+This project is licensed under the MIT License - see the [LICENSE.md](LICENSE.md) file for details
