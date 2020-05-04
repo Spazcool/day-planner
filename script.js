@@ -103,7 +103,7 @@ $(function(){
                 </div>
             </div>`
         );
-        $(`button[data-value=${val}]`).on("click", removeActivity);
+        $(`button[data-value='${val}']`).on("click", removeActivity);
     }
 
     function refreshItems(){
