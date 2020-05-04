@@ -6,6 +6,7 @@ $(function(){
         $("#dayPicked").text(today.format('LL'));
         //CURRENT DATE HEADER
         $("#currentDay").text(immutableToday.format('LL'));
+        // CREATE DATE STRING DD/MM/YYYY, FOR USE AS STORAGE KEY
         let date = moment($('#dayPicked').text()).locale('fr').format('L');
         // DYNAMICALLY CREATE TIMEBLOCKS
         for(let i = 0; i < 24; i++){
@@ -41,7 +42,6 @@ $(function(){
     }
 
     function addActivity() {
-        // CREATE DATE STRING DD/MM/YYYY
         let date = moment($('#dayPicked').text()).locale('fr').format('L');
         let saved = localStorage.getItem(date) ? JSON.parse(localStorage.getItem(date)) : [];
         let buttonVal = $(this).attr("data-hour");
@@ -106,7 +106,6 @@ $(function(){
         $(`button[data-value=${val}]`).on("click", removeActivity);
     }
 
-    // 
     function refreshItems(){
         let date = moment($('#dayPicked').text()).locale('fr').format('L');
         let saved = JSON.parse(localStorage.getItem(date));
@@ -130,7 +129,7 @@ $(function(){
 
         saved.forEach((hour, i) => {
             if(hour.time == buttonHour){ 
-                // TODO BUG: IF ELEMENTS THAT SHARE AN ARRAY HAVE THE SAME NAME, THEY BOTH GET GANKED
+                // BUG: IF ELEMENTS THAT SHARE AN ARRAY HAVE THE SAME NAME, THEY BOTH GET GANKED
                 let index = hour.activity.findIndex(el => el === buttonValue);
                 hour.activity.splice(index, 1);
                 // IF LAST ACTIVITY IN ARR, REMOVE ARR SO IT PLAYS NICE IN addActivity FUNC
@@ -144,8 +143,9 @@ $(function(){
         refreshItems()
     }
 
+    // STARTS HERE
     generateView()
-    
+
     $(".create").on("click", addActivity)
     
     // GO BACK A DAY 
