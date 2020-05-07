@@ -1,4 +1,4 @@
-# 05 Third-Party APIs: Work Day Scheduler
+# Work Day Scheduler
 
 A simple calendar application that allows the user to save multiple events for each hour of the day, for any number of days. This app runs in the browser and features dynamically updated HTML and CSS powered by jQuery and utilizes the Moment.JS library.
 
