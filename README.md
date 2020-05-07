@@ -21,10 +21,9 @@ No installation required.
 
 ## Built With
 
-* JS & jQuery
+* JS, jQuery & Moment.js
 * HTML
 * CSS & Bootstrap
-* Moment.JS
 
 ## Authors
 
